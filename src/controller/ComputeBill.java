@@ -1,8 +1,9 @@
 package controller;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import javax.swing.JOptionPane;
 import views.Row;
 import views.RowList;
 
-
+/* entry point of the application*/
 public class ComputeBill {
 	private Set<String> exemptedItems = new HashSet<String>();
 	public static void main(String[] args) {
@@ -28,7 +29,10 @@ public class ComputeBill {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-
+/*********************************************************
+ * @param items : input by the user
+ * @return Ouput class object contains all the output information
+ ********************************************************/
 	public Output computeBill(List<Row> items){
 		loadData();
 		List<String> itemOutput = new ArrayList<String>();
@@ -44,11 +48,13 @@ public class ComputeBill {
 			if(itemDescInLowerCase.substring(itemDescInLowerCase.length()-2).equals("at")){
 				itemdesc = itemdesc.substring(0, itemdesc.length()-2).trim();
 			}
+			
 			if(itemDescInLowerCase.contains("imported")){
 				BigDecimal importduty = new BigDecimal("0.05");
 				BigDecimal totalPrice = price.multiply(quantity);
 				salesTax = totalPrice.multiply(importduty);
 			}
+			
 			for(String exemptedItem : exemptedItems){
 			    exemptedItem = exemptedItem.toLowerCase();
 			    if(itemDescInLowerCase.contains(exemptedItem)||
@@ -58,14 +64,14 @@ public class ComputeBill {
 			    	break;
 			    }
 			}
-			
+			/*check if the item is exempted i.e food, medical drug,books*/
 			if(!isExemptedItem){
 				BigDecimal tax = new BigDecimal("0.10");
 				BigDecimal totalPrice = price.multiply(quantity);
 				salesTax = salesTax.add(totalPrice.multiply(tax));
 			}
 			
-			//round off salesTax component
+			//round off salesTax component up by 5%
 			BigDecimal divided = salesTax.divide(new BigDecimal("0.05"), 0, RoundingMode.UP);
 	        salesTax = divided.multiply(new BigDecimal("0.05"));
 	        
@@ -76,10 +82,16 @@ public class ComputeBill {
 		return new Output(itemOutput, totalSalesTax, totalBill);
 	}
     
-	
+	/************************************************
+	 * Read expemptedItems.txt and popluates set with
+	 * the exempted item
+	 ************************************************/
 	public void loadData(){
-		try (BufferedReader br = new BufferedReader(
-				new FileReader(System.getProperty("user.dir")+"/src/controller/exemptedItems.txt")))
+		try (
+				InputStream is = getClass().getResourceAsStream("exemptedItems.txt");
+				InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader br = new BufferedReader(isr);
+			)
 		   {
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
@@ -88,11 +100,15 @@ public class ComputeBill {
 				}
 			}
 		} catch (IOException e) {
-					e.printStackTrace();
+			System.out.println("here");
+			e.printStackTrace();
 		}
 	}
 	
-	
+	/*******************************************************
+	 * verfiy user input to check if qty is an integer,
+	 * price is a Big Decimal and item is a non-empty string 
+	 *******************************************************/
 	public void verifyInput(List<Row> items){
 		for(Row item : items){
 			try{

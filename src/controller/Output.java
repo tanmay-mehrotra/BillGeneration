@@ -18,7 +18,6 @@ public class Output {
 		return outputRows;
 	}
 	
-	
 	public BigDecimal getSalesTax() {
 		return totalSalesTax;
 	}

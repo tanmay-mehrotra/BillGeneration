@@ -11,6 +11,10 @@ import javax.swing.JPanel;
 import controller.ComputeBill;
 import controller.Output;
 
+/*******************************************
+ * class resposible for Generate Bill button 
+ * activity
+ *******************************************/
 @SuppressWarnings("serial")
 class GenerateBillButton extends JPanel{
 	private JButton generateBill;

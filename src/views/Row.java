@@ -11,7 +11,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
  
 
-// remeber to add null pointer checks : in case user leaves a field blank and generate bill
+/*********************************************
+ * class representing single row of user input
+ * @author tanmaymehrotra
+ **********************************************/
 @SuppressWarnings("serial")
 public class Row extends JPanel {
 
